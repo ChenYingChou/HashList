@@ -157,12 +157,12 @@ class THashList {
         bool Add(const string& Key, const _Tp& Value);
         bool Delete(const string& Key);
         bool Delete(int Index) { return Delete(GetBucket(Index)->Key); }
-        bool Find(const string& Key);
-        bool Find(const string& Key, _Tp& Value);
-        int IndexOf(const string& Key);
+        bool Find(const string& Key) const;
+        bool Find(const string& Key, _Tp& Value) const;
+        int IndexOf(const string& Key) const;
         bool Resize(size_t HashSize);
-        const string Keys(int Index) { return GetBucket(Index)->Key; }
-        const _Tp Values(int Index) { return GetBucket(Index)->Value; }
+        const string Keys(int Index) const { return GetBucket(Index)->Key; }
+        const _Tp Values(int Index) const { return GetBucket(Index)->Value; }
         size_t Count() const { return FCount; }
         size_t LimitCount() const { return FLimitCount; }
         size_t HashSize() const { return FHashSize; }
@@ -192,21 +192,22 @@ class THashList {
         size_t  FLimitCount;    // when FCount > FLimitCount then RemoveUseless()
         size_t  FBucketLoad;    // Count of HashList[] <> nullptr
 
-        int     FLastIndex;     // Cache for IndexOf ...
-        PBucket FLastBucket;
+        // Cache for IndexOf ...
+        mutable int     FLastIndex;
+        mutable PBucket FLastBucket;
 
         // Resize/rehash hints
         double  FMaxLoadFactor; // 0 ~ 1: zero means no auto-resize
         int     FMaxBucketLoad; // = (int)(FHashSize * FMaxLoadFactor)
         double  FAvgDeeps;      // used by Add()
         int     FMaxDeeps;      // used by !Find0() to set FOverMaxDeeps
-        bool    FOverMaxDeeps;  // set by !Find0() and used by Add()
+        mutable bool FOverMaxDeeps; // set by !Find0() and used by Add()
 
         void ReleaseBucket(PBucket Bucket);
         void ReleaseList(bool FreeNow=true);
-        bool Find0(const string& Key, size_t& nth, PBucket& Last, PBucket& Curr);
+        bool Find0(const string& Key, size_t& nth, PBucket& Last, PBucket& Curr) const;
         //PBucket NewBucket();
-        //PBucket GetBucket(const int Index);
+        //PBucket GetBucket(const int Index) const;
 
 PBucket NewBucket()
 {
@@ -238,7 +239,7 @@ PBucket NewBucket()
     return Curr;
 }
 
-PBucket GetBucket(const int Index)
+PBucket GetBucket(const int Index) const
 {
     int n;
 
@@ -450,7 +451,7 @@ bool THashList<_Tp>::Delete(const string& Key)
 }
 
 template <typename _Tp>
-bool THashList<_Tp>::Find0(const string& Key, size_t& nth, PBucket& Last, PBucket& Curr)
+bool THashList<_Tp>::Find0(const string& Key, size_t& nth, PBucket& Last, PBucket& Curr) const
 {
     Last = nullptr;
     nth = HashKey(Key) % FHashSize;
@@ -490,7 +491,7 @@ bool THashList<_Tp>::Find0(const string& Key, size_t& nth, PBucket& Last, PBucke
 }
 
 template <typename _Tp>
-bool THashList<_Tp>::Find(const string& Key)
+bool THashList<_Tp>::Find(const string& Key) const
 {
     PBucket Curr, Last;
     size_t nth;
@@ -498,7 +499,7 @@ bool THashList<_Tp>::Find(const string& Key)
 }
 
 template <typename _Tp>
-bool THashList<_Tp>::Find(const string& Key, _Tp& Value)
+bool THashList<_Tp>::Find(const string& Key, _Tp& Value) const
 {
     PBucket Curr, Last;
     size_t nth;
@@ -587,7 +588,7 @@ size_t THashList<_Tp>::HashKey(const string& Key) const
 }
 
 template <typename _Tp>
-int THashList<_Tp>::IndexOf(const string& Key)
+int THashList<_Tp>::IndexOf(const string& Key) const
 {
     PBucket Curr, Last;
     size_t nth;
