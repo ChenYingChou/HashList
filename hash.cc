@@ -6,6 +6,10 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 
+#if defined(CHARPTR_VER)
+  #define SUPPORT_HASHLIST_CHARPTR_STRDUP   1
+#endif
+
 #include "HashList.h"
 
 using namespace std;
@@ -21,7 +25,6 @@ using namespace tony;
   typedef THashList<string> HashList;
 #elif defined(CHARPTR_VER)
   typedef THashList<char*>  HashList;
-  #warning THashList<char*>::operator[] LHS may be leak memory!
 #elif defined(INTEGER_VER)
   typedef THashList<int>        HashList;
 #else

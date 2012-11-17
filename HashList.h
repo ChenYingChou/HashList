@@ -641,8 +641,9 @@ void THashList<_Tp>::ReleaseBucket(PBucket Bucket)
         Bucket->HitCount = nCount+1;    // Counter of FreeList
         Bucket->Key.clear();
         Bucket->ClearValue();
+
+        FFree = Bucket;
     }
-    FFree = Bucket;
 }
 
 template <typename _Tp>
