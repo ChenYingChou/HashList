@@ -68,7 +68,7 @@ class nullptr_t
 
 }
 
-#else
+#elif !defined(nullptr)
 
   #define nullptr       NULL
 
@@ -517,7 +517,7 @@ _Tp& THashList<_Tp>::operator[](const string& Key)
     size_t nth;
     if (Find0(Key,nth,Last,Curr)) return Curr->Value;
 
-    _Tp EMPTY = Empty_<_Tp>();
+    static _Tp EMPTY = Empty_<_Tp>();
     Add(Key,EMPTY);
     return Find0(Key,nth,Last,Curr) ? Curr->Value : EMPTY;
 }

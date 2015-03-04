@@ -17,7 +17,7 @@ ALL		: $(OBJS)
 	@echo ALL done
 
 clean	:
-	@rm -f $(OBJS)
+	@rm -rf $(OBJS) h???.dSYM
 
 ####### program ###########################################################
 hint 	: hash.cc HashList.h
